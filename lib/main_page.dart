@@ -34,7 +34,7 @@ class MainPageState extends State<MainPage> with TickerProviderStateMixin {
               selectedFontSize: 14.0,
               unselectedFontSize: 14.0,
               type: BottomNavigationBarType.fixed,
-              fixedColor: Colors.green[600],
+              fixedColor: Theme.of(context).primaryColor,
               backgroundColor: Colors.white,
               onTap: (index) => tap(index),
               items: [
