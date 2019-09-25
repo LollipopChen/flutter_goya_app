@@ -4,12 +4,13 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_goya_app/config/storage_manager.dart';
-import 'package:flutter_goya_app/provider/provider_manager.dart';
 import 'package:flutter_goya_app/routers/application.dart';
 import 'package:flutter_goya_app/routers/routes.dart';
 import 'package:flutter_goya_app/routers/uirouter/ui_router.dart';
 import 'package:flutter_goya_app/view_model/locale_model.dart';
 import 'package:flutter_goya_app/view_model/theme_model.dart';
+import 'package:flutter_goya_app/viewmodel/favourite_view_model.dart';
+import 'package:flutter_goya_app/viewmodel/user_view_model.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
@@ -53,7 +54,16 @@ class MyApp extends StatelessWidget {
       radius: 20.0,
       position: ToastPosition.bottom,
       child: MultiProvider(
-        providers: independentServices,
+        //初始化配置的Model
+        providers: <SingleChildCloneableWidget>[
+          ChangeNotifierProvider.value(value: ThemeModel()),
+          ChangeNotifierProvider.value(value: LocaleModel()),
+          ChangeNotifierProvider.value(value:  GlobalFavouriteStateModel()),
+          ChangeNotifierProxyProvider<GlobalFavouriteStateModel, UserViewModel>(
+            builder: (context, globalFavouriteStateModel, userModel) =>
+            userModel ?? UserViewModel(globalFavouriteStateModel: globalFavouriteStateModel),
+          )
+        ],
         child: Consumer2<ThemeModel,LocaleModel>(builder: (context, themeModel, localeModel, child) {
           return RefreshConfiguration(
             hideFooterWhenNotFull: true, //列表数据不满一页,不触发加载更多
@@ -69,7 +79,23 @@ class MyApp extends StatelessWidget {
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
               ],
-              supportedLocales: S.delegate.supportedLocales,
+              supportedLocales: S.delegate.supportedLocales,//只支持美国英语和中文简体
+              localeResolutionCallback:(Locale _locale, Iterable<Locale> supportedLocales) {
+                if (localeModel.locale != null) {
+                  //如果已经选定语言，则不跟随系统
+                  return localeModel.locale;
+                } else {
+                  Locale locale;
+                  //APP语言跟随系统语言，如果系统语言不是中文简体或美国英语，
+                  //则默认使用美国英语
+                  if (supportedLocales.contains(_locale)) {
+                    locale= _locale;
+                  } else {
+                    locale= Locale('en', 'US');
+                  }
+                  return locale;
+                }
+              },
               onGenerateRoute: Application.router.generator,
               initialRoute: UIRouter.splashPage,
             ),

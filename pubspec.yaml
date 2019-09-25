@@ -29,7 +29,11 @@ dependencies:
   english_words: ^3.1.3
   flutter_swiper: ^1.1.4
   dio: ^2.0.2
-  flutter_webview_plugin: ^0.3.0+2
+  flutter_webview_plugin: ^0.3.7
+  device_info: ^0.4.0+1
+  package_info: ^0.4.0+3
+  cookie_jar: ^1.0.0
+
   logger: ^0.7.0+2
   # 路由框架 https://github.com/theyakka/fluro
   fluro: ^1.5.0
@@ -51,6 +55,8 @@ dependencies:
   localstorage: ^2.0.0
   # State
   provider: ^3.0.0+1
+  #用占位符淡入图片
+  transparent_image: ^0.1.0
 
 
 dev_dependencies:

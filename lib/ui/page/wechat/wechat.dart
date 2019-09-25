@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-///项目
-class ProjectPage extends StatefulWidget{
+///公众号
+class WeChatPage extends StatefulWidget{
   @override
-  ProjectPageState createState() => ProjectPageState();
-
+  WeChatPageState createState() => WeChatPageState();
 }
 
-class ProjectPageState extends State<ProjectPage>{
+class WeChatPageState extends State<WeChatPage>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

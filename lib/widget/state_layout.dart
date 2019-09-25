@@ -3,6 +3,7 @@ import 'package:flutter_goya_app/res/styles.dart';
 import 'package:flutter_goya_app/res/text_styles.dart';
 import 'package:flutter_goya_app/utils/utils.dart';
 
+///状态UILayout
 class StateLayout extends StatefulWidget {
   
   const StateLayout({
@@ -32,7 +33,7 @@ class StateLayoutState extends State<StateLayout> {
         break;
       case StateType.noData:
         _img = "ic_no_data";
-        _hintText = "暂无数据";
+        _hintText = "暂无数据,点击刷新";
         break;
       case StateType.network:
         _img = "ic_no_net";
@@ -40,7 +41,7 @@ class StateLayoutState extends State<StateLayout> {
         break;
       case StateType.loading:
         _img = "";
-        _hintText = "";
+        _hintText = "加载中...";
         break;
       case StateType.empty:
         _img = "";
@@ -49,6 +50,7 @@ class StateLayoutState extends State<StateLayout> {
     }
     return Container(
       width: double.infinity,
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -60,14 +62,14 @@ class StateLayoutState extends State<StateLayout> {
             width: 120.0,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(Utils.getIconPath("state/$_img")),
+                image: AssetImage(Utils.getStateImagePath(_img)),
               ),
             ),
           )),
           Gaps.vGap16,
           Text(
             widget.hintText ?? _hintText,
-            style: TextStyles.textGray14,
+            style: TextStyles.textGray16,
           ),
           Gaps.vGap50,
         ],

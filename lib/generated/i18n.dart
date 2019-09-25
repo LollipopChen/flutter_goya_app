@@ -17,9 +17,42 @@ class S implements WidgetsLocalizations {
   TextDirection get textDirection => TextDirection.ltr;
 
   String get splashSkip => "Skip";
+
   String get autoBySystem => "Auto";
+
   String get fontKuaiLe => "ZCOOL KuaiLe";
+
+  String get home => 'Home';
+
+  String get project => 'Project';
+
+  String get wechat => 'WeChat';
+
+  String get article => 'Article';
+
+  String get me => 'Me';
+
+  String get logout => 'Logout';
+
+  String get toSignIn => "Sign In";
+
+  String get favourites => "Favorites";
+
+  String get darkMode => "Dark Mode";
+
+  String get setting => "Setting";
+
+  String get versionUpdate => "Version Update";
+  String get theme => "Theme";
+  String get retry => "Retry";
+  String get coin => "Coin";
+  String get catalogue => "Catalogue";
+
+  String get evaluate => 'Evaluate';
+  String get about => 'About';
+
 }
+
 /// 英文
 class $en extends S {
   const $en();
@@ -34,10 +67,62 @@ class $zh_CN extends S {
 
   @override
   String get splashSkip => "跳过";
+
   @override
   String get autoBySystem => "跟随系统";
+
   @override
   String get fontKuaiLe => "快乐字体";
+
+  @override
+  String get home => '首页';
+
+  @override
+  String get project => '项目';
+
+  @override
+  String get wechat => '公众号';
+
+  @override
+  String get article => '体系';
+
+  @override
+  String get me => '我的';
+
+  @override
+  String get logout => '退出登录';
+
+  @override
+  String get toSignIn => '登录';
+
+  @override
+  String get favourites => '收藏';
+
+  @override
+  String get darkMode => "黑夜模式";
+
+  @override
+  String get setting => "设置";
+
+  @override
+  String get versionUpdate => "版本更新";
+
+  @override
+  String get theme => "色彩主题";
+  @override
+  String get retry => "重试";
+  @override
+  String get coin => "积分";
+  @override
+  String get catalogue => "导航";
+
+  @override
+  String get evaluate => '评价';
+
+  @override
+  String get about => '关于';
+
+
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
@@ -45,8 +130,8 @@ class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {
 
   List<Locale> get supportedLocales {
     return const <Locale>[
-      Locale("en", ""),
-      Locale("zh", "CN"),
+      const Locale('en', 'US'), // 美国英语
+      const Locale('zh', 'CN'), // 中文简体
     ];
   }
 
