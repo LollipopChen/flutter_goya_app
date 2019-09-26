@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 
 ///首页
-class HomePage extends StatefulWidget{
+
+const double kHomeRefreshHeight = 180.0;
+
+class HomePage extends StatefulWidget {
   @override
   HomePageState createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage>{
+class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    super.build(context);
+
+    double bannerHeight = 150 + MediaQuery.of(context).padding.top;
     return Scaffold(
 
     );
   }
-
 }
