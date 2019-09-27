@@ -16,6 +16,8 @@ class S implements WidgetsLocalizations {
   // TODO: implement textDirection
   TextDirection get textDirection => TextDirection.ltr;
 
+  String get appName => "QFun Android";
+
   String get splashSkip => "Skip";
 
   String get autoBySystem => "Auto";
@@ -43,14 +45,47 @@ class S implements WidgetsLocalizations {
   String get setting => "Setting";
 
   String get versionUpdate => "Version Update";
+
   String get theme => "Theme";
+
   String get retry => "Retry";
+
   String get coin => "Coin";
+
   String get catalogue => "Catalogue";
 
   String get evaluate => 'Evaluate';
+
   String get about => 'About';
 
+  String get pageStateError => "Load Failed";
+
+  String get viewStateButtonRefresh => "Refresh";
+
+  String get viewStateMessageEmpty => "Nothing Found";
+
+  String get viewStateMessageUnAuth => "Not sign in yet";
+
+  String get loadFailed => "Load failed,retry later";
+
+  String get loadMoreFailed => "Load Failed,Click Retry!";
+
+  String get loadMoreIdle => "Load More..";
+
+  String get loadMoreLoading => "Loading...";
+
+  String get loadMoreNoData => "No more data";
+
+  String get refreshing => "Refreshing...";
+
+  String get refreshRefreshWhenRelease => "Refresh when release";
+
+  String get refreshComplete => "Refresh Complete";
+
+  String get pageStateRetry => "Retry";
+  String get refreshIdle => "Pull down to refresh";
+  String get refreshTwoLevel => "release to enter second floor";
+  String get articleTagTop => "Top";
 }
 
 /// 英文
@@ -64,7 +99,7 @@ class $zh_CN extends S {
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
-
+  String get appName => "QFun Android";
   @override
   String get splashSkip => "跳过";
 
@@ -109,10 +144,13 @@ class $zh_CN extends S {
 
   @override
   String get theme => "色彩主题";
+
   @override
   String get retry => "重试";
+
   @override
   String get coin => "积分";
+
   @override
   String get catalogue => "导航";
 
@@ -122,7 +160,48 @@ class $zh_CN extends S {
   @override
   String get about => '关于';
 
+  @override
+  String get pageStateError => "加载失败";
 
+  @override
+  String get loadMoreFailed => "加载失败,请点击重试";
+
+  @override
+  String get refreshRefreshWhenRelease => "释放可刷新";
+
+  @override
+  String get refreshComplete => "刷新完成";
+
+  @override
+  String get viewStateButtonRefresh => "刷新一下";
+
+  @override
+  String get loadFailed => "加载失败,请稍后重试";
+
+  @override
+  String get refreshing => "刷新中";
+
+  @override
+  String get loadMoreNoData => "没有更多数据了";
+
+  @override
+  String get loadMoreLoading => "加载中...";
+
+  @override
+  String get loadMoreIdle => "上拉加载更多";
+
+  String get viewStateMessageUnAuth => "Not sign in yet";
+
+  @override
+  String get viewStateMessageEmpty => "空空如也";
+
+  @override
+  String get pageStateRetry => "重试";
+
+  @override
+  String get refreshIdle => "下拉可刷新";
+  @override
+  String get articleTagTop => "置顶";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_goya_app/base/base.dart';
+import 'package:flutter_goya_app/base/base_view_model.dart';
 import 'package:flutter_goya_app/entity/article_tree_item_entity.dart';
 import 'package:flutter_goya_app/entity/navigation_site_entity.dart';
 import 'package:flutter_goya_app/repository/wan_android_repository.dart';
@@ -11,11 +11,6 @@ class ArticleViewModel extends BaseViewModel<ArticleTreeItemEntity> {
       BehaviorSubject();
 
   Stream<List<ArticleTreeItemEntity>> get dataStream => _dataObservable.stream;
-
-  @override
-  void dispose() {
-    _dataObservable.close();
-  }
 
   @override
   void doInit(BuildContext context) {
@@ -44,6 +39,7 @@ class NavigationSiteViewModel extends BaseViewModel<NavigationSiteEntity> {
   @override
   void dispose() {
     _dataObservable.close();
+    super.dispose();
   }
 
   @override

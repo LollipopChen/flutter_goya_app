@@ -7,6 +7,7 @@ import 'package:flutter_goya_app/ui/page/project/project.dart';
 import 'package:flutter_goya_app/ui/page/user/user.dart';
 import 'package:flutter_goya_app/ui/page/wechat/wechat.dart';
 import 'package:flutter_goya_app/viewmodel/article_view_model.dart';
+import 'package:flutter_goya_app/viewmodel/home_view_model.dart';
 import 'package:flutter_goya_app/viewmodel/login_view_model.dart';
 
 List<Widget> pages = <Widget>[
@@ -50,7 +51,7 @@ class MainPageState extends State<MainPage>{
             //body 使用IndexedStack，切换page时，页面的状态才能被保存下来
             index: tagIndex,
             children: <Widget>[
-              HomePage(),
+              ViewModelProvider(viewModel: HomeViewModel(),child: HomePage(),),
               ProjectPage(),
               WeChatPage(),
               ArticlePage(),

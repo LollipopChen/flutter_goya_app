@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_goya_app/base/base.dart';
+import 'package:flutter_goya_app/base/base_view_model.dart';
 import 'package:flutter_goya_app/config/storage_manager.dart';
 import 'package:flutter_goya_app/entity/user_entity.dart';
 import 'package:flutter_goya_app/repository/wan_android_repository.dart';
-import 'package:flutter_goya_app/viewmodel/user_view_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 const String kLoginName = 'kLoginName';
 const String kUser = 'kUser';
 
-class LoginViewModel extends BaseViewModel<UserEntity> with ChangeNotifier {
+class LoginViewModel extends BaseViewModel<UserEntity>{
   BehaviorSubject<UserEntity> _dataObservable = BehaviorSubject();
 
   Stream<UserEntity> get dataStream => _dataObservable.stream;

@@ -1,5 +1,3 @@
-
-///知识体系下的文章-- https://www.wanandroid.com/article/list/0/json?cid=60
 class ArticleEntity {
 	dynamic shareDate;
 	String projectLink;

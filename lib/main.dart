@@ -10,7 +10,6 @@ import 'package:flutter_goya_app/routers/uirouter/ui_router.dart';
 import 'package:flutter_goya_app/view_model/locale_model.dart';
 import 'package:flutter_goya_app/view_model/theme_model.dart';
 import 'package:flutter_goya_app/viewmodel/favourite_view_model.dart';
-import 'package:flutter_goya_app/viewmodel/user_view_model.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
@@ -59,10 +58,6 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider.value(value: ThemeModel()),
           ChangeNotifierProvider.value(value: LocaleModel()),
           ChangeNotifierProvider.value(value:  GlobalFavouriteStateModel()),
-          ChangeNotifierProxyProvider<GlobalFavouriteStateModel, UserViewModel>(
-            builder: (context, globalFavouriteStateModel, userModel) =>
-            userModel ?? UserViewModel(globalFavouriteStateModel: globalFavouriteStateModel),
-          )
         ],
         child: Consumer2<ThemeModel,LocaleModel>(builder: (context, themeModel, localeModel, child) {
           return RefreshConfiguration(

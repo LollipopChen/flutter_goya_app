@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -46,6 +45,12 @@ class UserPageState extends State<UserPage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    loginViewModel.dispose();
+    super.dispose();
   }
 }
 

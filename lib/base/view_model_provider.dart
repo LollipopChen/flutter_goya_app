@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_goya_app/base/base.dart';
+import 'package:flutter_goya_app/base/base_view_model.dart';
 
 ///提供viewModel的widget
 class ViewModelProvider<T extends BaseViewModel> extends StatefulWidget {

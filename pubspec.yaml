@@ -29,7 +29,10 @@ dependencies:
   english_words: ^3.1.3
   flutter_swiper: ^1.1.4
   dio: ^2.0.2
+
+  webview_flutter: ^0.3.13
   flutter_webview_plugin: ^0.3.7
+
   device_info: ^0.4.0+1
   package_info: ^0.4.0+3
   cookie_jar: ^1.0.0
@@ -55,8 +58,13 @@ dependencies:
   localstorage: ^2.0.0
   # State
   provider: ^3.0.0+1
-  #用占位符淡入图片
-  transparent_image: ^0.1.0
+  cached_network_image: ^1.1.1
+  # Html Encoder/Decoder
+  html_unescape: ^1.0.1+3
+  # 解析html标签
+  flutter_html: ^0.10.4
+  # 谁用谁闪亮
+  shimmer: ^1.0.0
 
 
 dev_dependencies:

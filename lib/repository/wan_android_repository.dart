@@ -1,4 +1,6 @@
+import 'package:flutter_goya_app/entity/article_entity.dart';
 import 'package:flutter_goya_app/entity/article_tree_item_entity.dart';
+import 'package:flutter_goya_app/entity/banner_entity.dart';
 import 'package:flutter_goya_app/entity/navigation_site_entity.dart';
 import 'package:flutter_goya_app/entity/user_entity.dart';
 import 'package:flutter_goya_app/net/wan_android_api.dart';
@@ -46,5 +48,29 @@ class WanAndroidRepository {
   static logout() async {
     /// 自动移除cookie
     await http.get('user/logout/json');
+  }
+
+  ///首页--轮播--广告
+  static Future fetchBanners() async{
+    var response = await http.get('banner/json');
+    return response.data
+        .map<BannerEntity>((item) => BannerEntity.fromJson(item))
+        .toList();
+  }
+
+  // 置顶文章
+  static Future fetchTopArticles() async {
+    var response = await http.get('article/top/json');
+    return response.data.map<ArticleEntity>((item) => ArticleEntity.fromJson(item)).toList();
+  }
+
+  // 首页 文章
+  static Future fetchArticles(int pageNum, {int cid}) async {
+//    await Future.delayed(Duration(seconds: 1));
+    var response = await http.get('article/list/$pageNum/json',
+        queryParameters: (cid != null ? {'cid': cid} : null));
+    return response.data['datas']
+        .map<ArticleEntity>((item) => ArticleEntity.fromJson(item))
+        .toList();
   }
 }

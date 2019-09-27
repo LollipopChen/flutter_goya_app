@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_goya_app/base/base_view_model.dart';
 import 'package:flutter_goya_app/entity/article_entity.dart';
 
 /// 全局维护状态是否收藏
 ///
-class GlobalFavouriteStateModel extends ChangeNotifier {
+class GlobalFavouriteStateModel extends BaseViewModel {
   /// 将页面列表项中所有的收藏状态操作结果存储到集合中.
   ///
   /// [key]为articleId,[value]为bool类型,代表是否收藏
@@ -46,5 +47,10 @@ class GlobalFavouriteStateModel extends ChangeNotifier {
 
   operator [](int id) {
     return _map[id];
+  }
+
+  @override
+  void doInit(BuildContext context) {
+    // TODO: implement doInit
   }
 }

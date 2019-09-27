@@ -1,5 +1,6 @@
 import 'package:flutter_goya_app/entity/article_entity.dart';
 import 'package:flutter_goya_app/entity/article_tree_item_entity.dart';
+import 'package:flutter_goya_app/entity/banner_entity.dart';
 import 'package:flutter_goya_app/entity/favourite_entity.dart';
 import 'package:flutter_goya_app/entity/navigation_site_entity.dart';
 import 'package:flutter_goya_app/entity/user_entity.dart';
@@ -12,6 +13,8 @@ class EntityFactory {
       return ArticleEntity.fromJson(json) as T;
     } else if (T.toString() == "ArticleTreeItemEntity") {
       return ArticleTreeItemEntity.fromJson(json) as T;
+    } else if (T.toString() == "BannerEntity") {
+      return BannerEntity.fromJson(json) as T;
     } else if (T.toString() == "FavouriteEntity") {
       return FavouriteEntity.fromJson(json) as T;
     } else if (T.toString() == "NavigationSiteEntity") {
