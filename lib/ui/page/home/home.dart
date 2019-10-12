@@ -1,25 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_goya_app/base/view_model_provider.dart';
-import 'package:flutter_goya_app/base/view_state_widget.dart';
 import 'package:flutter_goya_app/entity/article_entity.dart';
 import 'package:flutter_goya_app/entity/banner_entity.dart';
-import 'package:flutter_goya_app/generated/i18n.dart';
-import 'package:flutter_goya_app/provider/animated_provider.dart';
-import 'package:flutter_goya_app/provider/view_state.dart';
 import 'package:flutter_goya_app/res/styles.dart';
-import 'package:flutter_goya_app/routers/uirouter/ui_router.dart';
-import 'package:flutter_goya_app/ui/helper/refresh_helper.dart';
 import 'package:flutter_goya_app/viewmodel/home_view_model.dart';
-import 'package:flutter_goya_app/viewmodel/scroll_controller_model.dart';
 import 'package:flutter_goya_app/widget/article_list_Item.dart';
-import 'package:flutter_goya_app/widget/article_skeleton.dart';
-import 'package:flutter_goya_app/widget/banner_image.dart';
-import 'package:flutter_goya_app/widget/skeleton.dart';
+import 'package:flutter_goya_app/widget/state_layout.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 ///首页
@@ -31,260 +20,303 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
+class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   HomeViewModel homeModel;
 
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
+  // banner 控制器
+  SwiperController bannerController = SwiperController();
+
+  // 上下拉刷新加载
+  RefreshController refreshController = RefreshController(initialRefresh: true);
+  AnimationController aniController, scaleController;
+  AnimationController footerController;
 
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
+    aniController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 2000));
+    scaleController = AnimationController(
+        value: 0, vsync: this, duration: Duration(milliseconds: 3000));
+    footerController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 3000));
+    refreshController.headerMode.addListener(() {
+      if (refreshController.headerStatus == RefreshStatus.idle) {
+        scaleController.value = 0.0;
+        aniController.reset();
+      } else {
+        aniController.repeat();
+      }
+    });
+
     homeModel = ViewModelProvider.of(context);
     homeModel.init(context);
-    homeModel.doInit(context);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    aniController.dispose();
+    scaleController.dispose();
+    footerController.dispose();
+    refreshController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
+    /// iPhoneX 头部适配
     double bannerHeight = 150 + MediaQuery.of(context).padding.top;
     return Scaffold(
-      body: MediaQuery.removePadding(
-        context: context,
-        removeTop: false,
-        child: Builder(builder: (_) {
-          if (homeModel.viewState == ViewState.error) {
-            return ViewStateWidget(onPressed: () {
-              homeModel.doInit(context);
-            });
-          }
-          return RefreshConfiguration.copyAncestor(
-            context: context,
-            // 下拉触发二楼距离
-            twiceTriggerDistance: kHomeRefreshHeight - 15,
-            //最大下拉距离,android默认为0,这里为了触发二楼
-            maxOverScrollExtent: kHomeRefreshHeight,
-            child: SmartRefresher(
-              enableTwoLevel: true,
-              controller: homeModel.refreshController,
-              header: HomeRefreshHeader(),
-              //下拉头部
-              onTwoLevel: () async {
-                //第二层页面
-                await Navigator.of(context).pushNamed(UIRouter.homeSecondFloor);
-                await Future.delayed(Duration(milliseconds: 300));
-                Provider.of<HomeViewModel>(context)
-                    .refreshController
-                    .twoLevelComplete();
-              },
-              footer: RefresherFooter(),
-              //上拉底部
-              onRefresh: homeModel.refresh,
-              //下拉刷新
-              onLoading: homeModel.loadMore,
-              //上拉加载
-              enablePullUp: homeModel.list.isNotEmpty,
-              child: ViewModelProvider(
-                  viewModel: TapToTopModel(PrimaryScrollController.of(context),
-                      height: bannerHeight - kToolbarHeight),
-                  child: ListPage(homeModel)),
+      body: SmartRefresher(
+        enablePullUp: true,
+        controller: refreshController,
+        onRefresh: () async {
+          homeModel.onRefreshed(context);
+          refreshController.refreshCompleted();
+        },
+        onLoading: () async {
+          homeModel.onLoadMore(context);
+          refreshController.loadComplete();
+        },
+        footer: footerWidget(),
+        header: headerWidget(),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverToBoxAdapter(),
+            SliverAppBar(
+              pinned: true, //是否固定在顶部
+              expandedHeight: bannerHeight,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                background: BannerWidget(
+                  homeModel: homeModel,
+                  bannerController: bannerController,
+                ),
+              ),
             ),
-          );
-        }),
+            ArticleListWidget(homeModel),
+          ],
+        ),
       ),
     );
   }
-}
 
-///UI页面
-class ListPage extends StatefulWidget {
-  final HomeViewModel homeModel;
-
-  ListPage(this.homeModel);
-
-  @override
-  ListPageState createState() => ListPageState();
-}
-
-class ListPageState extends State<ListPage> {
-  TapToTopModel tapToTopModel;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    tapToTopModel = ViewModelProvider.of(context);
-    tapToTopModel.init(context);
+  ///底部
+  Widget footerWidget() {
+    // TODO: implement build
+    return CustomFooter(onModeChange: (mode) {
+      if (mode == LoadStatus.loading) {
+        scaleController.value = 0.0;
+        footerController.repeat();
+      } else {
+        footerController.reset();
+      }
+    }, builder: (context, mode) {
+      Widget child;
+      switch (mode) {
+        case LoadStatus.failed:
+          child = Text("加载失败！点击重试！");
+          break;
+        case LoadStatus.noMore:
+          child = Text("没有更多数据了");
+          break;
+        default:
+          child = SpinKitCircle(
+            color: Theme.of(context).accentColor,
+            size: 50.0,
+          );
+          break;
+      }
+      return Container(
+        height: 60,
+        child: Center(
+          child: child,
+        ),
+      );
+    });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    double bannerHeight = 150 + MediaQuery.of(context).padding.top;
-    return CustomScrollView(
-      controller: tapToTopModel.scrollController,
-      slivers: <Widget>[
-        SliverToBoxAdapter(),
-        SliverAppBar(
-          actions: <Widget>[
-            EmptyAnimatedSwitcher(
-              display: tapToTopModel.showTopBtn,
-              child: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  //TODO 搜索
-//                  showSearch(context: context, delegate: DefaultSearchDelegate());
-                },
+  ///头部
+  Widget headerWidget() {
+    return CustomHeader(
+      refreshStyle: RefreshStyle.Behind,
+      onOffsetChange: (offset) {
+        if (refreshController.headerMode.value != RefreshStatus.refreshing)
+          scaleController.value = offset / 80.0;
+      },
+      builder: (context, model) {
+        return Container(
+          child: FadeTransition(
+            opacity: scaleController,
+            child: ScaleTransition(
+              child: SpinKitCircle(
+                color: Theme.of(context).accentColor,
+                size: 50.0,
               ),
-            )
-          ],
-          flexibleSpace: FlexibleSpaceBar(
-            //广告
-            background: BannerWidget(widget.homeModel),
-            centerTitle: true,
-            title: GestureDetector(
-              onDoubleTap: tapToTopModel.scrollToTop,
-              child: EmptyAnimatedSwitcher(
-                display: tapToTopModel.showTopBtn,
-                child:
-                    Text(Platform.isIOS ? 'FunFlutter' : 'QFun Android'),
-              ),
+              scale: scaleController,
             ),
           ),
-          expandedHeight: bannerHeight,
-          pinned: true,
-        ),
-        if (widget.homeModel.viewState == ViewState.completed)
-          HomeTopArticleList(widget.homeModel),
-        HomeArticleList(widget.homeModel),
-      ],
-    );
-  }
-}
-
-class BannerWidget extends StatelessWidget {
-  final HomeViewModel homeModel;
-
-  BannerWidget(this.homeModel);
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    if (homeModel.viewState == ViewState.loading) {
-      return CupertinoActivityIndicator();
-    }
-
-    return StreamBuilder(
-      stream: homeModel.bannerDataStream,
-      builder:
-          (BuildContext context, AsyncSnapshot<List<BannerEntity>> snapshot) {
-        if (snapshot.hasError) {
-          return ViewStateWidget(
-            message: snapshot.error.toString(),
-            onPressed: () {
-              homeModel.doInit(context);
-            },
-          );
-        }
-
-        if (!snapshot.hasData) {
-          return Gaps.empty;
-        }
-
-        var banners = snapshot.data;
-        return Container(
-          height: 150 + MediaQuery.of(context).padding.top,
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-          ),
-          child: Swiper(
-            loop: true,
-            autoplay: true,
-            autoplayDelay: 5000,
-            pagination: SwiperPagination(),
-            itemCount: banners.length,
-            itemBuilder: (ctx, index) {
-              return InkWell(
-                  onTap: () {
-                    var banner = banners[index];
-//                    Navigator.of(context).pushNamed(RouteName.articleDetail,
-//                        arguments: Article()
-//                          ..id = banner.id
-//                          ..title = banner.title
-//                          ..link = banner.url
-//                          ..collect = false);
-                  },
-                  child: BannerImage(url: banners[index].imagePath));
-            },
-          ),
+          alignment: Alignment.center,
         );
       },
     );
   }
 }
 
-class HomeTopArticleList extends StatelessWidget {
+///广告
+class BannerWidget extends StatefulWidget {
   final HomeViewModel homeModel;
+  final SwiperController bannerController;
 
-  HomeTopArticleList(this.homeModel);
+  const BannerWidget({Key key, this.homeModel, this.bannerController})
+      : super(key: key);
 
   @override
+  BannerListState createState() {
+    // TODO: implement createState
+    return BannerListState();
+  }
+}
+
+class BannerListState extends State<BannerWidget> {
+  @override
   Widget build(BuildContext context) {
+    // TODO: implement build
     return StreamBuilder(
-        stream: homeModel.topArticleDataStream,
+        stream: widget.homeModel.bannerDataStream,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<BannerEntity>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CupertinoActivityIndicator();
+          }
+
+          var banners = snapshot?.data ?? [];
+          return Container(
+            width: MediaQuery.of(context).size.width,
+            height: 150 + MediaQuery.of(context).padding.top,
+            child: banners.length == 0
+                ? Gaps.empty
+                : Swiper(
+                    loop: true,
+                    autoplay: true,
+                    autoplayDelay: 3000,
+                    controller: widget.bannerController,
+                    itemWidth: MediaQuery.of(context).size.width,
+                    itemHeight: 150 + MediaQuery.of(context).padding.top,
+                    pagination: pagination(banners),
+                    itemBuilder: (BuildContext context, int index) {
+                      print('hhh:${banners[index]?.imagePath}');
+                      return Image.network(
+                        banners[index]?.imagePath,
+                        fit: BoxFit.fill,
+                      );
+                    },
+                    itemCount: snapshot.data?.length ?? 0,
+                    viewportFraction: 1.0,
+                  ),
+          );
+        });
+  }
+
+  ///广告的文字说明和dot
+  SwiperPagination pagination(List<BannerEntity> data) => SwiperPagination(
+        margin: EdgeInsets.all(0.0),
+        builder: SwiperCustomPagination(
+            builder: (BuildContext context, SwiperPluginConfig config) {
+          return Container(
+            color: Colors.black45,
+            height: 40,
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  data[config.activeIndex].title,
+                  style: TextStyle(fontSize: 14.0, color: Colors.white),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: DotSwiperPaginationBuilder(
+                            color: Colors.white70,
+                            activeColor: Colors.green,
+                            size: 6.0,
+                            activeSize: 6.0)
+                        .build(context, config),
+                  ),
+                )
+              ],
+            ),
+          );
+        }),
+      );
+}
+
+///文章
+class ArticleListWidget extends StatefulWidget {
+  final HomeViewModel homeModel;
+
+  ArticleListWidget(this.homeModel);
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return ArticleListWidgetState();
+  }
+}
+
+class ArticleListWidgetState extends State<ArticleListWidget> {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return StreamBuilder(
+        stream: widget.homeModel.articleDataStream,
         builder: (BuildContext context,
             AsyncSnapshot<List<ArticleEntity>> snapshot) {
+          var articleList = snapshot.data ?? [];
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: CupertinoActivityIndicator(),//Loading
+              ),
+            );
+          }
+          if(snapshot.hasError){
+            return SliverToBoxAdapter(
+              child: InkWell(
+                child: StateLayout(type:StateType.noData,hintText: snapshot.error.toString(),),
+                onTap: (){
+                  widget.homeModel.onRefreshed(context);
+                },
+              ),
+            );
+          }
+          if (articleList.length == 0) {
+            return SliverToBoxAdapter(
+              child: InkWell(
+                child: StateLayout(type:StateType.noData),
+                onTap: (){
+                  widget.homeModel.onRefreshed(context);
+                },
+              ),
+            );
+          }
+
           return SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                ArticleEntity item = snapshot.data[index];
+                ArticleEntity item = articleList[index];
                 return ArticleItemWidget(
                   item,
                   index: index,
-                  top: true,
                 );
               },
-              childCount: snapshot.data?.length ?? 0,
+              childCount: articleList.length,
             ),
           );
         });
   }
 }
-
-class HomeArticleList extends StatelessWidget {
-  final HomeViewModel homeModel;
-
-  const HomeArticleList(this.homeModel);
-
-  @override
-  Widget build(BuildContext context) {
-    if (homeModel.viewState == ViewState.loading) {
-      return SliverToBoxAdapter(
-        child: SkeletonList(
-          builder: (context, index) => ArticleSkeletonItem(),
-        ),
-      );
-    }
-    return StreamBuilder(
-        stream: homeModel.articleDataStream,
-        builder: (BuildContext context, AsyncSnapshot<List<ArticleEntity>> snapshot){
-      return SliverList(
-        delegate: SliverChildBuilderDelegate(
-              (context, index) {
-            ArticleEntity item = snapshot.data[index];
-            return ArticleItemWidget(
-              item,
-              index: index,
-            );
-          },
-          childCount: snapshot.data?.length ?? 0,
-        ),
-      );
-    });
-  }
-}
-

@@ -9,14 +9,8 @@ import 'package:flutter_goya_app/ui/page/wechat/wechat.dart';
 import 'package:flutter_goya_app/viewmodel/article_view_model.dart';
 import 'package:flutter_goya_app/viewmodel/home_view_model.dart';
 import 'package:flutter_goya_app/viewmodel/login_view_model.dart';
+import 'package:flutter_goya_app/viewmodel/project_view_model.dart';
 
-List<Widget> pages = <Widget>[
-  HomePage(),
-  ProjectPage(),
-  WeChatPage(),
-  ArticlePage(),
-  UserPage()
-];
 
 class MainPage extends StatefulWidget {
   @override
@@ -52,7 +46,7 @@ class MainPageState extends State<MainPage>{
             index: tagIndex,
             children: <Widget>[
               ViewModelProvider(viewModel: HomeViewModel(),child: HomePage(),),
-              ProjectPage(),
+              ViewModelProvider(viewModel: ProjectViewModel(), child: ProjectPage()),
               WeChatPage(),
               ArticlePage(),
               ViewModelProvider(viewModel:LoginViewModel() , child: UserPage())

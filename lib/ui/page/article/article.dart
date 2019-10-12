@@ -174,12 +174,6 @@ class NavigationSiteCategoryListState extends State<NavigationSiteCategoryList>
   }
 
   @override
-  void dispose() {
-    _viewModel.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     super.build(context);
     return StreamBuilder(

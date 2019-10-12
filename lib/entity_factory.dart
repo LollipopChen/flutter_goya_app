@@ -3,6 +3,8 @@ import 'package:flutter_goya_app/entity/article_tree_item_entity.dart';
 import 'package:flutter_goya_app/entity/banner_entity.dart';
 import 'package:flutter_goya_app/entity/favourite_entity.dart';
 import 'package:flutter_goya_app/entity/navigation_site_entity.dart';
+import 'package:flutter_goya_app/entity/project_list_entity.dart';
+import 'package:flutter_goya_app/entity/project_tree_entity.dart';
 import 'package:flutter_goya_app/entity/user_entity.dart';
 
 class EntityFactory {
@@ -19,6 +21,10 @@ class EntityFactory {
       return FavouriteEntity.fromJson(json) as T;
     } else if (T.toString() == "NavigationSiteEntity") {
       return NavigationSiteEntity.fromJson(json) as T;
+    } else if (T.toString() == "ProjectListEntity") {
+      return ProjectListEntity.fromJson(json) as T;
+    } else if (T.toString() == "ProjectTreeEntity") {
+      return ProjectTreeEntity.fromJson(json) as T;
     } else if (T.toString() == "UserEntity") {
       return UserEntity.fromJson(json) as T;
     } else {
