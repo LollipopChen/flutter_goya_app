@@ -5,11 +5,11 @@ import 'package:flutter_goya_app/ui/page/article/article.dart';
 import 'package:flutter_goya_app/ui/page/home/home.dart';
 import 'package:flutter_goya_app/ui/page/project/project.dart';
 import 'package:flutter_goya_app/ui/page/user/user.dart';
-import 'package:flutter_goya_app/ui/page/wechat/wechat.dart';
-import 'package:flutter_goya_app/viewmodel/article_view_model.dart';
+import 'package:flutter_goya_app/ui/page/wechat/we_chat.dart';
 import 'package:flutter_goya_app/viewmodel/home_view_model.dart';
 import 'package:flutter_goya_app/viewmodel/login_view_model.dart';
 import 'package:flutter_goya_app/viewmodel/project_view_model.dart';
+import 'package:flutter_goya_app/viewmodel/we_chat_view_model.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -47,9 +47,9 @@ class MainPageState extends State<MainPage>{
             children: <Widget>[
               ViewModelProvider(viewModel: HomeViewModel(),child: HomePage(),),
               ViewModelProvider(viewModel: ProjectViewModel(), child: ProjectPage()),
-              WeChatPage(),
+              ViewModelProvider(viewModel: WeChatViewModel(), child: WeChatPage()),
               ArticlePage(),
-              ViewModelProvider(viewModel:LoginViewModel() , child: UserPage())
+              UserPage()
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(

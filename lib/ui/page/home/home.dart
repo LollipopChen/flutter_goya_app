@@ -207,7 +207,6 @@ class BannerListState extends State<BannerWidget> {
                     itemHeight: 150 + MediaQuery.of(context).padding.top,
                     pagination: pagination(banners),
                     itemBuilder: (BuildContext context, int index) {
-                      print('hhh:${banners[index]?.imagePath}');
                       return Image.network(
                         banners[index]?.imagePath,
                         fit: BoxFit.fill,

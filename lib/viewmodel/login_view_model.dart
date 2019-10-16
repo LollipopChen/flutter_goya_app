@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_goya_app/base/base_view_model.dart';
 import 'package:flutter_goya_app/config/storage_manager.dart';
+import 'package:flutter_goya_app/constant/user_constant.dart';
 import 'package:flutter_goya_app/entity/user_entity.dart';
 import 'package:flutter_goya_app/repository/wan_android_repository.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,12 +14,12 @@ class LoginViewModel extends BaseViewModel<UserEntity>{
 
   Stream<UserEntity> get dataStream => _dataObservable.stream;
 
-  UserEntity _user;
-
-  UserEntity get user => _user;
-
-  ///用于判断当前用户是否登录
-  bool get hasUser => user != null;
+//  UserEntity _user;
+//
+//  UserEntity get user => _user;
+//
+//  ///用于判断当前用户是否登录
+//  bool get hasUser => user != null;
 
   @override
   void dispose() {
@@ -41,15 +42,17 @@ class LoginViewModel extends BaseViewModel<UserEntity>{
       var user = await WanAndroidRepository.login(loginName, password);
       saveUser(user);
       StorageManager.sharedPreferences.setString(kLoginName, user.username);
+      _dataObservable.add(user);
       return true;
     } catch (e) {
+      _dataObservable.addError(e);
       return false;
     }
   }
 
   //退出登录
   Future<bool> logout() async {
-    if (!hasUser) {
+    if (!UserInfo.hasUser) {
       //防止递归
       return false;
     }
@@ -64,14 +67,14 @@ class LoginViewModel extends BaseViewModel<UserEntity>{
 
   ///保存用户数据
   saveUser(UserEntity user) {
-    _user = user;
+    UserInfo.userInfo = user;
     notifyListeners();
     StorageManager.localStorage.setItem(kUser, user);
   }
 
   /// 清除持久化的用户数据
   clearUser() {
-    _user = null;
+    UserInfo.userInfo = null;
     notifyListeners();
     StorageManager.localStorage.deleteItem(kUser);
   }

@@ -2,27 +2,27 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_goya_app/base/view_model_provider.dart';
 import 'package:flutter_goya_app/entity/project_tree_entity.dart';
-import 'package:flutter_goya_app/ui/page/project/article_list_page.dart';
-import 'package:flutter_goya_app/viewmodel/project_list_view_model.dart';
-import 'package:flutter_goya_app/viewmodel/project_view_model.dart';
+import 'package:flutter_goya_app/ui/page/wechat/article_list_page.dart';
+import 'package:flutter_goya_app/viewmodel/we_chat_list_view_model.dart';
+import 'package:flutter_goya_app/viewmodel/we_chat_view_model.dart';
 import 'package:provider/provider.dart';
 
-///项目
-class ProjectPage extends StatefulWidget {
+///公众号
+class WeChatPage extends StatefulWidget {
   @override
-  ProjectPageState createState() => ProjectPageState();
+  WeChatPageState createState() => WeChatPageState();
 }
 
-class ProjectPageState extends State<ProjectPage>
+class WeChatPageState extends State<WeChatPage>
     with TickerProviderStateMixin {
-  ProjectViewModel projectViewModel;
+  WeChatViewModel weChatViewModel;
   TabController tabController;
   ValueNotifier<int> valueNotifier = ValueNotifier(0);
 
   @override
   void initState() {
-    projectViewModel = ViewModelProvider.of(context);
-    projectViewModel.init(context);
+    weChatViewModel = ViewModelProvider.of(context);
+    weChatViewModel.init(context);
     super.initState();
   }
 
@@ -31,7 +31,7 @@ class ProjectPageState extends State<ProjectPage>
     // TODO: implement build
     var primaryColor = Theme.of(context).primaryColor;
     return StreamBuilder(
-        stream: projectViewModel.projectTabStream,
+        stream: weChatViewModel.projectTabStream,
         builder: (BuildContext context,
             AsyncSnapshot<List<ProjectTreeEntity>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -83,7 +83,7 @@ class ProjectPageState extends State<ProjectPage>
                     children: List.generate(
                         list.length,
                         (index) => ViewModelProvider(
-                            viewModel: ProjectListViewModel(),
+                            viewModel: WeChatListViewModel(),
                             child: ArticleListPage(id: list[index].id))),
                   ),
                 );

@@ -83,9 +83,28 @@ class S implements WidgetsLocalizations {
   String get refreshComplete => "Refresh Complete";
 
   String get pageStateRetry => "Retry";
+
   String get refreshIdle => "Pull down to refresh";
+
   String get refreshTwoLevel => "release to enter second floor";
+
   String get articleTagTop => "Top";
+
+  String get fieldNotNull => "not empty";
+
+  String get userName => "UserName";
+
+  String get password => "Password";
+
+  String get signIn => "Sign In";
+
+  String get noAccount => "No Account ? ";
+
+  String get toSignUp => "Sign Up";
+
+  String get settingFont => "System Font";
+
+  String get settingLanguage => "Language";
 }
 
 /// 英文
@@ -99,7 +118,9 @@ class $zh_CN extends S {
 
   @override
   TextDirection get textDirection => TextDirection.ltr;
+
   String get appName => "QFun Android";
+
   @override
   String get splashSkip => "跳过";
 
@@ -200,8 +221,33 @@ class $zh_CN extends S {
 
   @override
   String get refreshIdle => "下拉可刷新";
+
   @override
   String get articleTagTop => "置顶";
+
+  @override
+  String get fieldNotNull => "不能为空";
+
+  @override
+  String get userName => "用户名";
+
+  @override
+  String get password => "密码";
+
+  @override
+  String get signIn => "登录";
+
+  @override
+  String get noAccount => "还没账号? ";
+
+  @override
+  String get toSignUp => "去注册";
+
+  @override
+  String get settingFont => "字体";
+
+  @override
+  String get settingLanguage => "多语言";
 }
 
 class GeneratedLocalizationsDelegate extends LocalizationsDelegate<S> {

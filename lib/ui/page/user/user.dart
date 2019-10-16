@@ -3,9 +3,12 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_goya_app/base/view_model_provider.dart';
+import 'package:flutter_goya_app/constant/user_constant.dart';
 import 'package:flutter_goya_app/entity/user_entity.dart';
 import 'package:flutter_goya_app/generated/i18n.dart';
 import 'package:flutter_goya_app/res/styles.dart';
+import 'package:flutter_goya_app/routers/uirouter/ui_router.dart';
+import 'package:flutter_goya_app/utils/novigator_utils.dart';
 import 'package:flutter_goya_app/utils/utils.dart';
 import 'package:flutter_goya_app/view_model/theme_model.dart';
 import 'package:flutter_goya_app/viewmodel/login_view_model.dart';
@@ -19,13 +22,9 @@ class UserPage extends StatefulWidget {
 }
 
 class UserPageState extends State<UserPage> {
-  LoginViewModel loginViewModel;
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    loginViewModel = ViewModelProvider.of(context);
   }
 
   @override
@@ -35,10 +34,10 @@ class UserPageState extends State<UserPage> {
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            actions: <Widget>[BarWidget(loginViewModel)],
+            actions: <Widget>[BarWidget()],
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             expandedHeight: 200 + MediaQuery.of(context).padding.top,
-            flexibleSpace: UserHeaderWidget(loginViewModel),
+            flexibleSpace: UserHeaderWidget(),
             pinned: true,
           ),
           UserListWidget()
@@ -46,20 +45,10 @@ class UserPageState extends State<UserPage> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    loginViewModel.dispose();
-    super.dispose();
-  }
 }
 
 /// 状态栏
 class BarWidget extends StatefulWidget {
-  final LoginViewModel loginViewModel;
-
-  BarWidget(this.loginViewModel);
-
   @override
   BarWidgetState createState() => BarWidgetState();
 }
@@ -67,38 +56,21 @@ class BarWidget extends StatefulWidget {
 class BarWidgetState extends State<BarWidget> {
   @override
   Widget build(BuildContext context) {
-    var loginViewModel = widget.loginViewModel;
-    return StreamBuilder(
-      stream: loginViewModel.dataStream,
-      builder: (BuildContext context, AsyncSnapshot<UserEntity> snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          return Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: AppBarIndicator(),
-          );
-        }
-
-        if (loginViewModel.hasUser) {
-          return IconButton(
-            tooltip: S.of(context).logout,
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              loginViewModel.logout();
-            },
-          );
-        }
-        return SizedBox.shrink();
-      },
-    );
+    if (UserInfo.hasUser) {
+      return IconButton(
+        tooltip: S.of(context).logout,
+        icon: Icon(Icons.exit_to_app),
+        onPressed: () {
+          //TODO 退出登录
+        },
+      );
+    }
+    return SizedBox.shrink();
   }
 }
 
 /// 头部
 class UserHeaderWidget extends StatefulWidget {
-  final LoginViewModel loginViewModel;
-
-  UserHeaderWidget(this.loginViewModel);
-
   @override
   UserHeaderWidgetState createState() => UserHeaderWidgetState();
 }
@@ -106,17 +78,18 @@ class UserHeaderWidget extends StatefulWidget {
 class UserHeaderWidgetState extends State<UserHeaderWidget> {
   @override
   Widget build(BuildContext context) {
-    var loginViewModel = widget.loginViewModel;
+    var userInfo = UserInfo.user;
     return ClipPath(
       clipper: BottomClipper(),
       child: Container(
         color: Theme.of(context).primaryColor.withAlpha(200),
         padding: EdgeInsets.only(top: 10),
         child: InkWell(
-          onTap: loginViewModel.hasUser
+          onTap: UserInfo.hasUser
               ? null
               : () {
                   // TODO  登录
+                  NavigatorUtils.push(context, UIRouter.loginPage);
                 },
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -126,12 +99,12 @@ class UserHeaderWidgetState extends State<UserHeaderWidget> {
                 child: Hero(
                   tag: 'loginLogo',
                   child: ClipOval(
-                      child: loginViewModel.hasUser
-                          ? Image.network(loginViewModel.user.icon,
+                      child: UserInfo.hasUser
+                          ? Image.network(userInfo.icon,
                               fit: BoxFit.cover,
                               width: 80,
                               height: 80,
-                              color: loginViewModel.hasUser
+                              color: UserInfo.hasUser
                                   ? Theme.of(context).accentColor.withAlpha(200)
                                   : Theme.of(context).accentColor.withAlpha(10),
                               // https://api.flutter.dev/flutter/dart-ui/BlendMode-class.html
@@ -140,7 +113,7 @@ class UserHeaderWidgetState extends State<UserHeaderWidget> {
                               fit: BoxFit.cover,
                               width: 80,
                               height: 80,
-                              color: loginViewModel.hasUser
+                              color: UserInfo.hasUser
                                   ? Theme.of(context).accentColor.withAlpha(200)
                                   : Theme.of(context).accentColor.withAlpha(10),
                               colorBlendMode: BlendMode.colorDodge)),
@@ -150,8 +123,8 @@ class UserHeaderWidgetState extends State<UserHeaderWidget> {
               Column(
                 children: <Widget>[
                   Text(
-                      loginViewModel.hasUser
-                          ? loginViewModel.user.nickname
+                      UserInfo.hasUser
+                          ? userInfo.nickname
                           : S.of(context).toSignIn,
                       style: Theme.of(context)
                           .textTheme
@@ -221,6 +194,7 @@ class UserListWidget extends StatelessWidget {
             title: Text(S.of(context).setting),
             onTap: () {
               //TODO 设置
+              NavigatorUtils.push(context, UIRouter.settingPage);
             },
             leading: Icon(
               Icons.settings,
@@ -303,26 +277,24 @@ class ThemeSettingWidget extends StatelessWidget {
               }).toList(),
               Material(
                   child: InkWell(
-                    onTap: () {
-                      var model = Provider.of<ThemeModel>(context);
-                      var brightness = Theme.of(context).brightness;
-                      model.switchRandomTheme(brightness: brightness);//随机主题颜色
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border:
-                          Border.all(color: Theme.of(context).accentColor)),
-                      width: 40,
-                      height: 40,
-                      child: Text(
-                        "?",
-                        style: TextStyle(
-                            fontSize: 20, color: Theme.of(context).accentColor),
-                      ),
-                    ),
-                  )
-              )
+                onTap: () {
+                  var model = Provider.of<ThemeModel>(context);
+                  var brightness = Theme.of(context).brightness;
+                  model.switchRandomTheme(brightness: brightness); //随机主题颜色
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).accentColor)),
+                  width: 40,
+                  height: 40,
+                  child: Text(
+                    "?",
+                    style: TextStyle(
+                        fontSize: 20, color: Theme.of(context).accentColor),
+                  ),
+                ),
+              ))
             ],
           ),
         ),

@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_goya_app/base/view_model_provider.dart';
-import 'package:flutter_goya_app/entity/project_list_entity.dart';
+import 'package:flutter_goya_app/entity/we_chat_list_entity.dart';
 import 'package:flutter_goya_app/ui/helper/refresh_helper.dart';
-import 'package:flutter_goya_app/viewmodel/project_list_view_model.dart';
-import 'package:flutter_goya_app/widget/project_article_list_Item.dart';
+import 'package:flutter_goya_app/viewmodel/we_chat_list_view_model.dart';
 import 'package:flutter_goya_app/widget/state_layout.dart';
+import 'package:flutter_goya_app/widget/we_chat_article_list_Item.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-///文章列表
+///公众号文章列表
 class ArticleListPage extends StatefulWidget {
   final int id;
 
@@ -20,7 +20,7 @@ class ArticleListPage extends StatefulWidget {
 
 class ArticleListPageState extends State<ArticleListPage>
     with AutomaticKeepAliveClientMixin {
-  ProjectListViewModel viewModel;
+  WeChatListViewModel viewModel;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class ArticleListPageState extends State<ArticleListPage>
       child: StreamBuilder(
           stream: viewModel.projectListStream,
           builder: (BuildContext context,
-              AsyncSnapshot<List<ProjectListData>> snapshot) {
+              AsyncSnapshot<List<WeChatListData>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: CupertinoActivityIndicator(),
@@ -49,7 +49,7 @@ class ArticleListPageState extends State<ArticleListPage>
                   hintText: snapshot.error.toString(),
                 ),
                 onTap: () {
-                  viewModel.loadProjectData(context, 0, cid: widget.id);
+                  viewModel.loadWeChatListData(context, 1, cid: widget.id);
                 },
               );
             }
@@ -68,8 +68,8 @@ class ArticleListPageState extends State<ArticleListPage>
                 child: ListView.builder(
                     itemCount: list.length,
                     itemBuilder: (context, index) {
-                      ProjectListData item = list[index];
-                      return ProjectArticleItemWidget(
+                      WeChatListData item = list[index];
+                      return WeChatArticleItemWidget(
                         item,
                         index: index,
                       );

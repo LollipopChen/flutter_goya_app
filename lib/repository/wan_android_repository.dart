@@ -5,6 +5,7 @@ import 'package:flutter_goya_app/entity/navigation_site_entity.dart';
 import 'package:flutter_goya_app/entity/project_list_entity.dart';
 import 'package:flutter_goya_app/entity/project_tree_entity.dart';
 import 'package:flutter_goya_app/entity/user_entity.dart';
+import 'package:flutter_goya_app/entity/we_chat_list_entity.dart';
 import 'package:flutter_goya_app/net/wan_android_api.dart';
 
 ///玩安卓
@@ -81,5 +82,20 @@ class WanAndroidRepository {
     var response = await http.get('project/list/$pageNum/json',
         queryParameters: (cid != null ? {'cid': cid} : null));
     return ProjectListEntity.fromJson(response.data);
+  }
+
+  ///公众号导航栏数据
+  static Future<List<ProjectTreeEntity>> fetchWeChatTabs()async{
+    var response = await http.get('wxarticle/chapters/json');
+    return response.data
+        .map<ProjectTreeEntity>(
+            (item) => ProjectTreeEntity.fromJson(item))
+        .toList();
+  }
+
+  ///项目列表数据
+  static Future<WeChatListEntity> fetchWeChatArticles(int pageNum,int cid) async {
+    var response = await http.get('wxarticle/list/$cid/$pageNum/json');
+    return WeChatListEntity.fromJson(response.data);
   }
 }

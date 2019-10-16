@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_goya_app/base/base_view_model.dart';
 import 'package:flutter_goya_app/entity/project_list_entity.dart';
+import 'package:flutter_goya_app/entity/we_chat_list_entity.dart';
 import 'package:flutter_goya_app/repository/wan_android_repository.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 
-class ProjectListViewModel extends BaseViewModel {
+class WeChatListViewModel extends BaseViewModel {
   /// 分页第一页页码
   static const int pageNumFirst = 1;
 
@@ -13,13 +14,13 @@ class ProjectListViewModel extends BaseViewModel {
   int _currentPageNum = pageNumFirst;
 
   //文章数据
-  BehaviorSubject<List<ProjectListData>> _projectListObservable =
+  BehaviorSubject<List<WeChatListData>> _projectListObservable =
       BehaviorSubject();
 
-  Stream<List<ProjectListData>> get projectListStream =>
+  Stream<List<WeChatListData>> get projectListStream =>
       _projectListObservable.stream;
 
-  List<ProjectListData> articleList = [];
+  List<WeChatListData> articleList = [];
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -40,12 +41,12 @@ class ProjectListViewModel extends BaseViewModel {
   }
 
   ///获取文章数据
-  Future<ProjectListEntity> loadProjectData(BuildContext context, int pageNum,
+  Future<WeChatListEntity> loadWeChatListData(BuildContext context, int pageNum,
       {int cid}) async {
-    return await WanAndroidRepository.fetchProjectArticles(pageNum, cid: cid)
-        .then((ProjectListEntity projectListEntity) {
-      var data = projectListEntity.datas;
-      if (projectListEntity.datas.isEmpty && !isRefresh) {
+    return await WanAndroidRepository.fetchWeChatArticles(pageNum, cid)
+        .then((WeChatListEntity weChatListEntity) {
+      var data = weChatListEntity.datas;
+      if (weChatListEntity.datas.isEmpty && !isRefresh) {
         _currentPageNum--;
       }
       if(isRefresh){
@@ -55,7 +56,7 @@ class ProjectListViewModel extends BaseViewModel {
         refreshController.loadComplete();
       }
 
-      if (data.length == projectListEntity.total) {
+      if (data.length == weChatListEntity.total) {
         refreshController.loadNoData();
       }
       articleList.addAll(data);
@@ -70,12 +71,12 @@ class ProjectListViewModel extends BaseViewModel {
     isRefresh = true;
     articleList.clear();
     _currentPageNum = pageNumFirst;
-    loadProjectData(context, _currentPageNum, cid: cid);
+    loadWeChatListData(context, _currentPageNum, cid: cid);
   }
 
   //上拉加载
   onLoadMore(BuildContext context, {int cid}) {
     isRefresh = false;
-    loadProjectData(context, _currentPageNum++, cid: cid);
+    loadWeChatListData(context, _currentPageNum++, cid: cid);
   }
 }
