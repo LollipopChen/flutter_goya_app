@@ -157,6 +157,7 @@ class UserListWidget extends StatelessWidget {
             title: Text(S.of(context).favourites),
             onTap: () {
               //TODO 收藏
+              NavigatorUtils.push(context, UIRouter.collectionPage);
             },
             leading: Icon(
               Icons.favorite_border,

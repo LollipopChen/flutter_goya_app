@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_goya_app/base/view_model_provider.dart';
 import 'package:flutter_goya_app/entity/user_entity.dart';
 import 'package:flutter_goya_app/generated/i18n.dart';
+import 'package:flutter_goya_app/utils/novigator_utils.dart';
 import 'package:flutter_goya_app/utils/utils.dart';
 import 'package:flutter_goya_app/view_model/theme_model.dart';
 import 'package:flutter_goya_app/viewmodel/login_view_model.dart';
@@ -45,10 +46,12 @@ class LoginPageState extends State<LoginPage> {
         physics: ClampingScrollPhysics(),
         slivers: <Widget>[
           SliverAppBar(
-            leading: Icon(
+            leading: IconButton(icon: Icon(
               Icons.chevron_left,
               size: 40,
-            ),
+            ), onPressed: ()=>{
+              NavigatorUtils.goBack(context)
+            }),
             floating: true,
           ),
           SliverToBoxAdapter(
