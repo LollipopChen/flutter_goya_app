@@ -19,7 +19,7 @@ class BackTitleBar extends StatefulWidget implements PreferredSizeWidget {
 
   BackTitleBar({
     Key key,
-    this.titleText,
+    this.titleText:'',
     this.backIconName: 'ic_back_white',
     this.isShowBack: false,
     this.isShowRightIcon: false,

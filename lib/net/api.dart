@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_goya_app/net/wan_android_api.dart';
 import 'package:flutter_goya_app/utils/platform_utils.dart';
 
 export 'package:dio/dio.dart';
@@ -43,22 +44,22 @@ class HeaderInterceptor extends InterceptorsWrapper {
     return options;
   }
 
-//  @override
-//  onError(DioError err) {
-//    debugPrint(err.toString());
-//    if (err.response == null) {
-//      return http.reject(err.message);
-//    }
-//    int statusCode = err.response?.statusCode;
-//    String errorMsg = err.response?.statusMessage;
-//    switch (statusCode) {
-//      case 405:
-//        errorMsg = 'code:$statusCode\n服务器接口方法未找到';
-//        break;
-//      default:
-//        errorMsg = 'code:$statusCode\n$errorMsg';
-//        break;
-//    }
-//    return http.reject(errorMsg);
-//  }
+  @override
+  onError(DioError err) {
+    debugPrint(err.toString());
+    if (err.response == null) {
+      return http.reject(err.message);
+    }
+    int statusCode = err.response?.statusCode;
+    String errorMsg = err.response?.statusMessage;
+    switch (statusCode) {
+      case 405:
+        errorMsg = 'code:$statusCode\n服务器接口方法未找到';
+        break;
+      default:
+        errorMsg = 'code:$statusCode\n$errorMsg';
+        break;
+    }
+    return http.reject(errorMsg);
+  }
 }

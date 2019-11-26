@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_goya_app/generated/i18n.dart';
 import 'package:flutter_goya_app/routers/uirouter/ui_router.dart';
-import 'package:flutter_goya_app/utils/logger.dart';
 import 'package:flutter_goya_app/utils/novigator_utils.dart';
 import 'package:flutter_goya_app/utils/utils.dart';
 
+///启动页
 class SplashPage extends StatefulWidget {
   @override
   SplashPageState createState() => SplashPageState();

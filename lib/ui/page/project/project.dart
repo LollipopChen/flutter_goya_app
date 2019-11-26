@@ -5,6 +5,7 @@ import 'package:flutter_goya_app/entity/project_tree_entity.dart';
 import 'package:flutter_goya_app/ui/page/project/article_list_page.dart';
 import 'package:flutter_goya_app/viewmodel/project_list_view_model.dart';
 import 'package:flutter_goya_app/viewmodel/project_view_model.dart';
+import 'package:flutter_goya_app/widget/state_layout.dart';
 import 'package:provider/provider.dart';
 
 ///项目
@@ -39,6 +40,19 @@ class ProjectPageState extends State<ProjectPage>
               child: CircularProgressIndicator(),
             );
           }
+
+          if (snapshot.hasError) {
+            return InkWell(
+              child: StateLayout(
+                type: StateType.noData,
+                hintText: snapshot.error.toString(),
+              ),
+              onTap: () {
+                projectViewModel.loadTabData(context);
+              },
+            );
+          }
+
           var tabList = snapshot.data ?? [];
           List<ProjectTreeEntity> list = [];
           for(int i=0; i< tabList.length;i++){
@@ -46,6 +60,14 @@ class ProjectPageState extends State<ProjectPage>
             if(tab.visible == 1){
               list.add(tab);
             }
+          }
+          if(tabList.isEmpty){
+            return InkWell(
+              child: StateLayout(type: StateType.noData),
+              onTap: () {
+                projectViewModel.loadTabData(context);
+              },
+            );
           }
 
           return ValueListenableProvider<int>.value(

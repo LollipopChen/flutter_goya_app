@@ -6,6 +6,7 @@ import 'package:flutter_goya_app/entity/banner_entity.dart';
 import 'package:flutter_goya_app/res/styles.dart';
 import 'package:flutter_goya_app/viewmodel/home_view_model.dart';
 import 'package:flutter_goya_app/widget/article_list_Item.dart';
+import 'package:flutter_goya_app/widget/back_title_bar.dart';
 import 'package:flutter_goya_app/widget/state_layout.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -84,12 +85,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         header: headerWidget(),
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverToBoxAdapter(),
+//            SliverToBoxAdapter(),
             SliverAppBar(
               pinned: true, //是否固定在顶部
               expandedHeight: bannerHeight,
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
+                collapseMode: CollapseMode.pin,
                 background: BannerWidget(
                   homeModel: homeModel,
                   bannerController: bannerController,
@@ -196,25 +198,33 @@ class BannerListState extends State<BannerWidget> {
           return Container(
             width: MediaQuery.of(context).size.width,
             height: 150 + MediaQuery.of(context).padding.top,
-            child: banners.length == 0
-                ? Gaps.empty
-                : Swiper(
-                    loop: true,
-                    autoplay: true,
-                    autoplayDelay: 3000,
-                    controller: widget.bannerController,
-                    itemWidth: MediaQuery.of(context).size.width,
-                    itemHeight: 150 + MediaQuery.of(context).padding.top,
-                    pagination: pagination(banners),
-                    itemBuilder: (BuildContext context, int index) {
-                      return Image.network(
-                        banners[index]?.imagePath,
-                        fit: BoxFit.fill,
-                      );
-                    },
-                    itemCount: snapshot.data?.length ?? 0,
-                    viewportFraction: 1.0,
-                  ),
+            child: snapshot.hasError
+                ? InkWell(
+                    child: StateLayout(
+                      type: StateType.noData,
+                    ),
+                    onTap: () {
+                      widget.homeModel.loadBannerData(context);
+                    })
+                : (banners.isEmpty
+                    ? Gaps.empty
+                    : Swiper(
+                        loop: true,
+                        autoplay: true,
+                        autoplayDelay: 3000,
+                        controller: widget.bannerController,
+                        itemWidth: MediaQuery.of(context).size.width,
+                        itemHeight: 150 + MediaQuery.of(context).padding.top,
+                        pagination: pagination(banners),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Image.network(
+                            banners[index]?.imagePath,
+                            fit: BoxFit.fill,
+                          );
+                        },
+                        itemCount: snapshot.data?.length ?? 0,
+                        viewportFraction: 1.0,
+                      )),
           );
         });
   }
@@ -279,15 +289,18 @@ class ArticleListWidgetState extends State<ArticleListWidget> {
             return SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: CupertinoActivityIndicator(),//Loading
+                child: CupertinoActivityIndicator(), //Loading
               ),
             );
           }
-          if(snapshot.hasError){
+          if (snapshot.hasError) {
             return SliverToBoxAdapter(
               child: InkWell(
-                child: StateLayout(type:StateType.noData,hintText: snapshot.error.toString(),),
-                onTap: (){
+                child: StateLayout(
+                  type: StateType.noData,
+                  hintText: snapshot.error.toString(),
+                ),
+                onTap: () {
                   widget.homeModel.onRefreshed(context);
                 },
               ),
@@ -296,8 +309,8 @@ class ArticleListWidgetState extends State<ArticleListWidget> {
           if (articleList.length == 0) {
             return SliverToBoxAdapter(
               child: InkWell(
-                child: StateLayout(type:StateType.noData),
-                onTap: (){
+                child: StateLayout(type: StateType.noData),
+                onTap: () {
                   widget.homeModel.onRefreshed(context);
                 },
               ),

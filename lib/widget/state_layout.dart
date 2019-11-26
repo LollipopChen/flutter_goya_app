@@ -58,8 +58,8 @@ class StateLayoutState extends State<StateLayout> {
           widget.type == StateType.loading ? CupertinoActivityIndicator(radius: 16.0) :
           (widget.type == StateType.empty ? SizedBox() :
           Container(
-            height: 120.0,
-            width: 120.0,
+            height: 80.0,
+            width: 80.0,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(Utils.getStateImagePath(_img)),
