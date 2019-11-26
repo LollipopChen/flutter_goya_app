@@ -218,6 +218,7 @@ class UserListWidget extends StatelessWidget {
             title: Text(S.of(context).about),
             onTap: () {
               //TODO 关于
+              NavigatorUtils.push(context, UIRouter.aboutPage);
             },
             leading: Icon(
               Icons.error_outline,

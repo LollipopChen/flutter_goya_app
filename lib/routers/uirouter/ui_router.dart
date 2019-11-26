@@ -3,6 +3,7 @@ import 'package:flutter_goya_app/base/view_model_provider.dart';
 import 'package:flutter_goya_app/main_page.dart';
 import 'package:flutter_goya_app/routers/router_provider.dart';
 import 'package:flutter_goya_app/ui/page/splash.dart';
+import 'package:flutter_goya_app/ui/page/user/about.dart';
 import 'package:flutter_goya_app/ui/page/user/collection.dart';
 import 'package:flutter_goya_app/ui/page/user/login.dart';
 import 'package:flutter_goya_app/ui/page/user/setting.dart';
@@ -17,6 +18,7 @@ class UIRouter implements IRouterProvider {
   static String loginPage = "login_page";
   static String settingPage = "setting_page";
   static String collectionPage = "collection_page";
+  static String aboutPage = "about_page";
 
   @override
   void initRouter(Router router) {
@@ -42,5 +44,9 @@ class UIRouter implements IRouterProvider {
         handler: Handler(
             handlerFunc: (_, params) => ViewModelProvider(
                 viewModel: CollectionViewModel(), child: CollectionPage())));
+    //关于
+    router.define(aboutPage,
+        handler: Handler(
+            handlerFunc: (_, params) => AboutPage()));
   }
 }

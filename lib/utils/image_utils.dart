@@ -37,3 +37,11 @@ Row loadOvalImage(String url,
     ],
   );
 }
+
+///加载圆形网络图片
+Widget loadAssetsOvalImage(String name,
+    {double width, double height, BoxFit fit, Color color}){
+  return ClipOval(
+    child: Image.asset(name, height: height, width: width, fit: fit, color: color),
+  );
+}
