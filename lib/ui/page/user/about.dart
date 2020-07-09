@@ -14,14 +14,16 @@ class AboutPage extends StatefulWidget {
 
 class AboutPageState extends State<AboutPage> {
   PackageInfo packageInfo;
-  String appName;
-  String version;
 
   @override
   void initState() {
     // TODO: implement initState
-    loadPackageInfo();
     super.initState();
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo){
+      setState(() {
+        this.packageInfo = packageInfo;
+      });
+    });
   }
 
   @override
@@ -41,29 +43,17 @@ class AboutPageState extends State<AboutPage> {
                 width: 100),
             Gaps.vGap5,
             Text(
-              '${packageInfo.appName}',
+              '${packageInfo?.appName}',
               style: TextStyles.textBoldDark18,
             ),
             Gaps.vGap5,
             Text(
-              'v${packageInfo.version}',
+              'v${packageInfo?.version}',
               style: TextStyles.textDark16,
             ),
           ],
         ),
       ),
     );
-  }
-
-  Future loadPackageInfo() async {
-    packageInfo = await PackageInfo.fromPlatform();
-    //APP名称
-   appName = packageInfo.appName;
-    //包名
-    String packageName = packageInfo.packageName;
-    //版本名
-    version = packageInfo.version;
-    //版本号
-    String buildNumber = packageInfo.buildNumber;
   }
 }
